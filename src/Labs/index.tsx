@@ -9,6 +9,9 @@ export default function Labs() {
     <div>
       <h1>Labs</h1>
       <h4>Name: Mukesh Cheemakurthi</h4>
+      <a href="https://github.com/1-mukesh-1/kambaz-react-web-app/tree/a1" id="wd-github">
+          My GitHub Repository
+      </a>
       <TOC />
       <Routes>
         <Route path="/" element={<Navigate to="Lab1" />} />
