@@ -5,7 +5,7 @@ export default function Labs() {
     return (
         <div>
             <h1>Labs</h1>
-            <p>Welcome to the Labs section!</p>
+            <p>Lets learn about HTML</p>
             <Lab1/>
             <Lab2/>
         </div>
