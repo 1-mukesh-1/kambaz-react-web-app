@@ -9,6 +9,7 @@ export default function Labs() {
     <div>
       <h1>Labs</h1>
       <h4>Name: Mukesh Cheemakurthi</h4>
+      <h4>Section: CS5610 Web Development Summer - 2 2025</h4>
       <a href="https://github.com/1-mukesh-1/kambaz-react-web-app/tree/a1" id="wd-github">
           My GitHub Repository
       </a>
