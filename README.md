@@ -12,8 +12,8 @@ Assignment 1 - of React-based implementation of the Kambaz Online Learning Manag
 1.  Local Setup:
     ```bash
     git clone https://github.com/1-mukesh-1/kambaz-react-web-app.git
-    git checkout a1
     cd kambaz-react-web-app
+    git checkout a1
     npm install
     npm run dev
     ```
