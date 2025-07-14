@@ -1,12 +1,14 @@
-import Labs from './Labs/index.tsx'
-
-function App() {
+import Kambaz from "./Kambaz";
+import Labs from "./Labs";
+import { HashRouter, Route, Routes, Navigate } from "react-router-dom";
+export default function App() {
   return (
-    <div>
-      <h1>Hello</h1>
-      <Labs/>
-    </div>
-  )
-}
-
-export default App
+    <HashRouter>
+      <div>
+        <Routes>
+          <Route path="/" element={<Navigate to="Kambaz" />} />
+          <Route path="/Labs/*" element={<Labs />} />
+          <Route path="/Kambaz/*" element={<Kambaz />} />
+        </Routes>
+      </div>
+    </HashRouter> );}
