@@ -12,7 +12,7 @@ export default function Signin() {
                 placeholder="password" type="password"
                 className="mb-2" />
             <Link id="wd-signin-btn"
-                to="/Kambaz/Account/Profile"
+                to="/Kambaz/Dashboard"
                 className="btn btn-primary w-100 mb-2">
                 Sign in </Link>
             <Link id="wd-signup-link" to="/Kambaz/Account/Signup">Sign up</Link>
