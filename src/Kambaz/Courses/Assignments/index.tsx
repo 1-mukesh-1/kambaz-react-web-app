@@ -5,7 +5,7 @@ import { FaFileAlt } from "react-icons/fa";
 import { IoEllipsisVertical } from "react-icons/io5";
 import AssignmentControls from "./AssignmentControls";
 import AssignmentControlButtons from "./AssignmentControlButtons";
-import GreenCheckmark from "../Modules/GreenCheckmark";
+import GreenCheckmark from "../GreenCheckmark";
 
 export default function Assignments() {
     return (
