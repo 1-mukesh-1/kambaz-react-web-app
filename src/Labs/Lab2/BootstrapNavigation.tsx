@@ -1,7 +1,7 @@
 import { Button, Card, Nav } from 'react-bootstrap';
 import './index.css'
 
-export default function BootstrapLists() {
+export default function BootstrapNavigation() {
     return (
         <div>
             <div id="wd-css-navigating-with-tabs">

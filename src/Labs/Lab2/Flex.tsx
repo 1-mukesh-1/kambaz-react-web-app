@@ -1,6 +1,6 @@
 import "./index.css";
 
-export default function Corners() {
+export default function Flex() {
     return (
         <div id="wd-css-flex">
             <h2>Flex</h2>
