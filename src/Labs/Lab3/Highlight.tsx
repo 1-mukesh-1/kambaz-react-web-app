@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import type { ReactNode } from "react";
 
 export default function Highlight({ children }: { children: ReactNode }) {
     return (
