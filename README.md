@@ -1,10 +1,10 @@
-# (A1) Kambaz React Web App
+# (A3) Kambaz React Web App
 
-Assignment 1 - of React-based implementation of the Kambaz Online Learning Management System (OLMS).
+Assignment 3 - of React-based implementation of the Kambaz Online Learning Management System (OLMS).
 
 ## Live Deployment
 
-**[A1 - Netlify Live Deployment](https://a1--cs5610-kambaz-react-web-app.netlify.app/)**
+**[A3 - Netlify Live Deployment](https://a3--cs5610-kambaz-react-web-app.netlify.app/)**
 
 
 ## How to Run Locally
@@ -13,7 +13,7 @@ Assignment 1 - of React-based implementation of the Kambaz Online Learning Manag
     ```bash
     git clone https://github.com/1-mukesh-1/kambaz-react-web-app.git
     cd kambaz-react-web-app
-    git checkout a1
+    git checkout a3
     npm install
     npm run dev
     ```
