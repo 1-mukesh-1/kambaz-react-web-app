@@ -1,3 +1,4 @@
+import ReduxExamples from "./ReduxExamples";
 // import ClickEvent from "./ClickEvent";
 // import PassingDataOnEvent from "./PassingDataOnEvent";
 import PassingFunctions from "./PassingFunctions";
@@ -11,6 +12,8 @@ export default function Lab4() {
             <h2>Lab 4</h2>
             ...
             <PassingFunctions theFunction={sayHello} />
+
+            <ReduxExamples />
 
             {/* <PassingFunctions theFunction={ClickEvent} />
             <PassingFunctions theFunction={PassingDataOnEvent} /> */}
