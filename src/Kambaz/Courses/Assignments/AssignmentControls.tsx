@@ -1,7 +1,9 @@
 import { FaPlus, FaSearch } from "react-icons/fa";
 import { Button } from "react-bootstrap";
+import { Link, useParams } from "react-router-dom";
 
 export default function AssignmentControls() {
+    const { cid } = useParams();
     return (
         <div id="wd-assignments-controls" className="text-nowrap">
             <div className="d-flex justify-content-between align-items-center mb-4">
@@ -10,8 +12,8 @@ export default function AssignmentControls() {
                     <input
                         type="text"
                         className="form-control ps-5"
-                        placeholder="Search..."
-                        style={{ 
+                        placeholder="Search for Assignment"
+                        style={{
                             backgroundColor: "#f8f9fa",
                             border: "1px solid #dee2e6",
                             borderRadius: "0.375rem"
@@ -22,9 +24,11 @@ export default function AssignmentControls() {
                     <Button variant="secondary" className="me-2" size="lg">
                         <FaPlus className="me-1" /> Group
                     </Button>
-                    <Button variant="danger" size="lg">
-                        <FaPlus className="me-1" /> Assignment
-                    </Button>
+                    <Link to={`/Kambaz/Courses/${cid}/Assignments/new`}>
+                        <Button variant="danger" size="lg">
+                            <FaPlus className="me-1" /> Assignment
+                        </Button>
+                    </Link>
                 </div>
             </div>
         </div>
