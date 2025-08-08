@@ -5,9 +5,9 @@ import {
     enrollCourse,
     unenrollCourse,
     toggleViewAllCourses,
-} from "./enrollmentReducer";
+} from "./reducer";
 import { useEffect } from "react";
-import { setEnrollments } from "./enrollmentReducer";
+import { setEnrollments } from "./reducer";
 import * as coursesClient from "./Courses/client";
 import * as userClient from "./Account/client";
 import type { RootState } from "./store";

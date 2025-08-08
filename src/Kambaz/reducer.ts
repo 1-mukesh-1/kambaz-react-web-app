@@ -1,8 +1,4 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
-// import {
-// enrollments as initialEnrollments,
-// courses as allCourses,
-// } from "./Database";
 
 export type Enrollment = {
     _id: string;
@@ -13,22 +9,14 @@ export type Enrollment = {
 export type Course = {
     _id: string;
     username: string;
-    isFaculty?: boolean; // if you use this field anywhere
+    isFaculty?: boolean;
 };
-
-// type State = {
-//   enrollments: Enrollment[];
-//   courses: typeof allCourses;
-//   showAllCourses: boolean;
-// };
 
 const initialState: {
     enrollments: Enrollment[];
-    // courses: any[];
     showAllCourses: boolean;
 } = {
     enrollments: [],
-    // courses: [],
     showAllCourses: false,
 };
 

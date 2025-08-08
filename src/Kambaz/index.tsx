@@ -7,7 +7,7 @@ import "./styles.css";
 import ProtectedRoute from "./Account/ProtectedRoute";
 import Account from "./Account";
 import { useDispatch, useSelector } from "react-redux";
-import PrivateCourseRoute from "./PrivateCourseRoute";
+import PrivateCourseRoute from "./ProtectedCourseRoute";
 import Session from "./Account/Session";
 import * as userClient from "./Account/client";
 import * as coursesClient from "./Courses/client";
