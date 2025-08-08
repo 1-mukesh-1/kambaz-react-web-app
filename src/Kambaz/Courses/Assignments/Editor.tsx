@@ -1,6 +1,6 @@
 import { Form, Button, Row, Col } from "react-bootstrap";
 import { useEffect, useState } from "react";
-import { Link, useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { addAssignment, updateAssignment } from "./reducer";
 import * as assignmentsClient from "./client";
