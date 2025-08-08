@@ -35,7 +35,7 @@ export default function Assignments() {
         <Col>
           <Form.Control
             id="wd-password"
-            placeholder="🔍 Search..."
+            placeholder="Search"
             type="text"
             className="col mb-2"
           />
