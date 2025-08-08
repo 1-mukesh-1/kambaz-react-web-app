@@ -79,7 +79,7 @@ export default function Dashboard({
         <div id="wd-dashboard">
             <h1 id="wd-dashboard-title">Dashboard</h1>
             <hr />
-            
+
             {isFaculty() && (
                 <div className="mb-4">
                     <h5>New Course</h5>
@@ -104,16 +104,16 @@ export default function Dashboard({
                 </div>
             )}
 
-            <Button 
-                onClick={() => dispatch(toggleViewAllCourses())} 
-                className="btn btn-primary float-end" 
-                style={{width: "200px"}}
+            <Button
+                onClick={() => dispatch(toggleViewAllCourses())}
+                className="btn btn-primary float-end"
+                style={{ width: "200px" }}
             >
                 {showAllCourses ? "Show Enrolled" : "Show All Courses"}
             </Button>
             <h2 id="wd-dashboard-published">{showAllCourses ? "All Courses" : "Enrolled Courses"} ({displayedCourses.length})</h2>
             <hr />
-            
+
             <div id="wd-dashboard-courses">
                 <Row xs={1} md={5} className="g-4">
                     {displayedCourses.map((course: any) => (
@@ -123,11 +123,11 @@ export default function Dashboard({
                                     to={`/Kambaz/Courses/${course._id}/Home`}
                                     className="wd-dashboard-course-link text-decoration-none text-dark"
                                 >
-                                    <Card.Img 
-                                        src={`/images/${course._id}.jpg`} 
-                                        variant="top" 
-                                        width="100%" 
-                                        height={160} 
+                                    <Card.Img
+                                        src={`/images/${course._id}.jpg`}
+                                        variant="top"
+                                        width="100%"
+                                        height={160}
                                         onError={(e: any) => e.target.src = '/images/default.jpg'}
                                     />
                                     <Card.Body className="card-body">
@@ -146,22 +146,22 @@ export default function Dashboard({
                                 <Card.Footer>
                                     {isFaculty() && (
                                         <>
-                                            <Button 
-                                                onClick={(e) => { 
-                                                    e.preventDefault(); 
-                                                    setCourse(course); 
-                                                }} 
-                                                className="btn btn-warning me-2" 
+                                            <Button
+                                                onClick={(e) => {
+                                                    e.preventDefault();
+                                                    setCourse(course);
+                                                }}
+                                                className="btn btn-warning me-2"
                                                 id="wd-edit-course-click"
                                             >
                                                 Edit
                                             </Button>
-                                            <Button 
-                                                onClick={(e) => { 
-                                                    e.preventDefault(); 
-                                                    deleteCourse(course._id); 
-                                                }} 
-                                                className="btn btn-danger" 
+                                            <Button
+                                                onClick={(e) => {
+                                                    e.preventDefault();
+                                                    deleteCourse(course._id);
+                                                }}
+                                                className="btn btn-danger"
                                                 id="wd-delete-course-click"
                                             >
                                                 Delete
@@ -169,9 +169,9 @@ export default function Dashboard({
                                         </>
                                     )}
                                     {isEnrolled(course._id)
-                                        ? <Button 
-                                            variant="danger" 
-                                            className="float-end" 
+                                        ? <Button
+                                            variant="danger"
+                                            className="float-end"
                                             onClick={(e) => {
                                                 e.preventDefault();
                                                 unenrollCourseHandler(course._id);
@@ -179,9 +179,9 @@ export default function Dashboard({
                                         >
                                             Unenroll
                                         </Button>
-                                        : <Button 
-                                            variant="success" 
-                                            className="float-end" 
+                                        : <Button
+                                            variant="success"
+                                            className="float-end"
                                             onClick={(e) => {
                                                 e.preventDefault();
                                                 enrollCourseHandler(course._id);
