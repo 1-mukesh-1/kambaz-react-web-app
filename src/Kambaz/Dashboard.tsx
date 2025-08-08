@@ -33,41 +33,69 @@ export default function Dashboard({
     const showAllCourses = useSelector(
         (state: RootState) => state.enrollmentReducer.showAllCourses
     );
+
     const fetchEnrollments = async () => {
+        if (!currentUser?._id) return;
+        
         try {
+            console.log("Fetching enrollments for user:", currentUser._id);
             const enrollments = await userClient.findCoursesForEnrolledUser(
                 currentUser._id
             );
+            console.log("Fetched enrollments:", enrollments);
             dispatch(setEnrollments(enrollments));
         } catch (error) {
             console.error("Failed to fetch enrollments", error);
         }
     };
-    const isEnrolled = (courseId: string) =>
-        enrollments.some((e: any) => e._id === courseId);
-    const isFaculty = () => currentUser?.role === "FACULTY";
-    const enrollCourseHandler = async (courseId: string) => {
-        await coursesClient.enrollUserInCourse(currentUser._id, courseId);
-        dispatch(
-            enrollCourse({
-                userId: currentUser._id,
-                courseId: courseId,
-            })
-        );
+
+    const isEnrolled = (courseId: string) => {
+        const enrolled = enrollments.some((e: any) => e._id === courseId);
+        console.log(`Course ${courseId} enrolled:`, enrolled);
+        return enrolled;
     };
+
+    const isFaculty = () => currentUser?.role === "FACULTY";
+
+    const enrollCourseHandler = async (courseId: string) => {
+        try {
+            console.log("Enrolling in course:", courseId);
+            await coursesClient.enrollUserInCourse(currentUser._id, courseId);
+            
+            dispatch(
+                enrollCourse({
+                    userId: currentUser._id,
+                    courseId: courseId,
+                })
+            );
+            
+            await fetchEnrollments();
+        } catch (error) {
+            console.error("Failed to enroll in course:", error);
+        }
+    };
+
     const unenrollCourseHandler = async (courseId: string) => {
-        await coursesClient.unenrollUserFromCourse(currentUser._id, courseId);
-        dispatch(
-            unenrollCourse({
-                userId: currentUser._id,
-                courseId: courseId,
-            })
-        );
+        try {
+            console.log("Unenrolling from course:", courseId);
+            await coursesClient.unenrollUserFromCourse(currentUser._id, courseId);
+            
+            dispatch(
+                unenrollCourse({
+                    userId: currentUser._id,
+                    courseId: courseId,
+                })
+            );
+            
+            await fetchEnrollments();
+        } catch (error) {
+            console.error("Failed to unenroll from course:", error);
+        }
     };
 
     useEffect(() => {
         fetchEnrollments();
-    }, [enrollments]);
+    }, [currentUser._id]);
 
     const displayedCourses = courses.filter((course) =>
         showAllCourses
@@ -174,6 +202,7 @@ export default function Dashboard({
                                             className="float-end"
                                             onClick={(e) => {
                                                 e.preventDefault();
+                                                e.stopPropagation();
                                                 unenrollCourseHandler(course._id);
                                             }}
                                         >
@@ -184,6 +213,7 @@ export default function Dashboard({
                                             className="float-end"
                                             onClick={(e) => {
                                                 e.preventDefault();
+                                                e.stopPropagation();
                                                 enrollCourseHandler(course._id);
                                             }}
                                         >
