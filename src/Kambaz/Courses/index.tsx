@@ -1,45 +1,40 @@
-import { Navigate, Route, Routes, useParams, useLocation } from "react-router-dom";
 import Modules from "./Modules";
 import Home from "./Home";
-import Assignments from "./Assignments";
-import AssignmentEditor from "./Assignments/Editor";
-import { FaAlignJustify } from 'react-icons/fa';
 import PeopleTable from "./People/Table";
-import { useSelector } from "react-redux";
+import { FaAlignJustify } from "react-icons/fa6";
+import { Route, Routes, useParams, useLocation } from "react-router";
 import CourseNavigation from "./Navigation";
+import Assignments from "./Assignments";
 
-export default function Courses() {
-    const { cid } = useParams();
-    const { courses } = useSelector((state: any) => state.coursesReducer);
+export default function Courses({ courses }: { courses: any[] }) {
+  const { cid } = useParams();
     const course = courses.find((course: any) => course._id === cid);
     const { pathname } = useLocation();
 
-    return (
-        <div id="wd-courses">
-            <h2 className="text-danger">
-                <FaAlignJustify className="me-4 fs-4 mb-1" />
+  return (
+    <div id="wd-courses">
+      <h2 className="text-danger">
+        <FaAlignJustify className="me-4 fs-4 mb-1" />
                 {course && course.name + " > " + pathname.split("/")[4]}
-            </h2>
-            <hr />
-            <div className="d-flex">
-                <div className="d-none d-md-block">
-                    <CourseNavigation />
-                </div>
-                <div className="flex-fill">
-                    <Routes>
-                        <Route path="/" element={<Navigate to="Home" />} />
-                        <Route path="Home" element={<Home />} />
-                        <Route path="Modules" element={<Modules />} />
+      </h2>
+
+      <div className="d-flex">
+        <div className="d-none d-md-block">
+          <CourseNavigation />
+        </div>
+        <div className="flex-fill">
+          <Routes>
+            <Route path="Home" element={<Home />} />
+            <Route path="Modules" element={<Modules />} />
                         <Route path="Piazza" element={<h2>Piazza</h2>} />
                         <Route path="Zoom" element={<h2>Zoom</h2>} />
-                        <Route path="Assignments" element={<Assignments />} />
-                        <Route path="Assignments/:aid" element={<AssignmentEditor />} />
+            <Route path="Assignments" element={<Assignments />} />
                         <Route path="Quizzes" element={<h2>Quizzes</h2>} />
                         <Route path="Grades" element={<h2>Grades</h2>} />
-                        <Route path="People" element={<PeopleTable />} />
-                    </Routes>
-                </div>
-            </div>
+            <Route path="People" element={<PeopleTable />} />
+          </Routes>
         </div>
-    );
+      </div>
+    </div>
+  );
 }
