@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import * as client from "./client";
+import axios from "axios";
 
 export default function HttpClient() {
     const [welcomeOnClick, setWelcomeOnClick] = useState("");
@@ -8,10 +9,37 @@ export default function HttpClient() {
         const message = await client.fetchWelcomeMessage();
         setWelcomeOnClick(message);
     };
+    
+
     const fetchWelcomeOnLoad = async () => {
-        const welcome = await client.fetchWelcomeMessage();
-        setWelcomeOnLoad(welcome);
+        try {
+            setWelcomeOnLoad("Loading...");  // Show loading state
+            console.log("Starting to fetch welcome message...");
+            
+            const welcome = await client.fetchWelcomeMessage();
+            console.log("Response received:", welcome);
+            
+            if (!welcome) {
+                throw new Error("Empty response received");
+            }
+            
+            setWelcomeOnLoad(welcome);
+        } catch (error) {
+            console.error("Full error object:", error);
+            
+            let errorMessage = "Unknown error occurred";
+            if (axios.isAxiosError(error)) {
+                errorMessage = error.response 
+                    ? `Server Error: ${error.response.status} - ${error.response.statusText}`
+                    : `Network Error: ${error.message}`;
+                console.error("Request config:", error.config);
+            }
+            
+            setWelcomeOnLoad(`Error: ${errorMessage}`);
+        }
     };
+
+
     useEffect(() => {
         fetchWelcomeOnLoad();
     }, []);

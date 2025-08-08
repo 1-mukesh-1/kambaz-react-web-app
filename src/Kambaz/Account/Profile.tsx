@@ -3,12 +3,21 @@ import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { useEffect, useState } from "react";
 import { setCurrentUser } from "./reducer";
+import * as client from "./client";
+
 
 export default function Profile() {
     const { currentUser } = useSelector((state: any) => state.accountReducer);
+
     const [profile, setProfile] = useState(currentUser);
     const dispatch = useDispatch();
     const navigate = useNavigate();
+
+
+    const updateProfile = async () => {
+        const updatedProfile = await client.updateUser(profile);
+        dispatch(setCurrentUser(updatedProfile));
+    };
 
     useEffect(() => {
         if (!currentUser) {
@@ -20,6 +29,13 @@ export default function Profile() {
         dispatch(setCurrentUser(null));
         navigate("/Kambaz/Account/Signin");
     };
+
+    const signout = async () => {
+        await client.signout();
+        dispatch(setCurrentUser(null));
+        navigate("/Kambaz/Account/Signin");
+    };
+
 
     if (!currentUser) {
         return null;
@@ -74,11 +90,10 @@ export default function Profile() {
                 <option value="STUDENT">Student</option>
             </Form.Select>
             <div className="d-grid gap-2">
-                <Button
-                    onClick={handleSignout}
-                    className="btn btn-danger btn-lg text-white">
+                <button onClick={updateProfile} className="btn btn-primary w-100 mb-2"> Update </button>
+                <button onClick={signout} className="wd-signout-btn btn btn-danger w-100">
                     Sign out
-                </Button>
+                </button>
             </div>
         </div>
     );
