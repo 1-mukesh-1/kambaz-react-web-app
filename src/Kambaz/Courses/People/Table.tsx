@@ -2,6 +2,7 @@ import { Table } from "react-bootstrap";
 import { FaUserCircle } from "react-icons/fa";
 import { useParams } from "react-router";
 import * as db from "../../Database";
+
 export default function PeopleTable() {
 	const { cid } = useParams();
 	const { users, enrollments } = db;
