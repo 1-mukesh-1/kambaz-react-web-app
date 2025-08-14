@@ -1,9 +1,36 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { assignments } from "../../Database";
 
-const initialState = {
-	assignments: assignments,
+interface Assignment {
+	_id: string;
+	title: string;
+	description: string;
+	points: number;
+	due: string;
+	available: string;
+	until: string;
+	group: string;
+	displayGradeAs: string;
+	submissionType: string;
+	onlineEntryOptions: {
+		textEntry: boolean;
+		websiteUrl: boolean;
+		mediaRecordings: boolean;
+		studentAnnotation: boolean;
+		fileUploads: boolean;
+	};
+	assignTo: string;
+	course?: string;
+}
+
+interface AssignmentsState {
+	assignments: Assignment[];
+	assignment: Assignment;
+}
+
+const initialState: AssignmentsState = {
+	assignments: [],
 	assignment: {
+		_id: "",
 		title: "New Assignment",
 		description: "New Description",
 		points: 100,
