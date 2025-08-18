@@ -1,8 +1,6 @@
-// src/Kambaz/Dashboard.tsx - Updated addNewCourse function
 import { Link } from "react-router-dom";
-import { Button, Card, Col, Form, Row, Alert } from "react-bootstrap";
+import { Button, Card, Col, Form, Row } from "react-bootstrap";
 import { useSelector } from "react-redux";
-import { useState } from "react";
 
 export default function Dashboard({
     courses,
@@ -26,33 +24,7 @@ export default function Dashboard({
     updateEnrollment: (courseId: string, enrolled: boolean) => void;
 }) {
     const { currentUser } = useSelector((state: any) => state.accountReducer);
-    const [error, setError] = useState<string>("");
-    
     const isFaculty = () => currentUser?.role === "FACULTY";
-
-    const handleAddCourse = async () => {
-        try {
-            setError("");
-            if (!course.name || !course.number) {
-                setError("Course name and number are required");
-                return;
-            }
-            await addCourse();
-            setCourse({
-                _id: "",
-                name: "",
-                number: "",
-                startDate: "",
-                endDate: "",
-                description: "",
-                department: "",
-                credits: 3,
-            });
-        } catch (error: any) {
-            console.error("Error adding course:", error);
-            setError(error.message || "Failed to create course");
-        }
-    };
 
     return (
         <div id="wd-dashboard">
@@ -71,51 +43,23 @@ export default function Dashboard({
             {isFaculty() && (
                 <div className="mb-4">
                     <h5>New Course</h5>
-                    {error && (
-                        <Alert variant="danger" className="mb-2">
-                            {error}
-                        </Alert>
-                    )}
                     <Form.Control
-                        value={course.name || ""}
+                        value={course.name}
                         className="form-control mb-2"
-                        placeholder="Course Name *"
+                        placeholder="Course Name"
                         onChange={(e) => setCourse({ ...course, name: e.target.value })}
                     />
                     <Form.Control
-                        value={course.number || ""}
-                        className="form-control mb-2"
-                        placeholder="Course Number *"
-                        onChange={(e) => setCourse({ ...course, number: e.target.value })}
-                    />
-                    <Form.Control
-                        value={course.department || ""}
-                        className="form-control mb-2"
-                        placeholder="Department"
-                        onChange={(e) => setCourse({ ...course, department: e.target.value })}
-                    />
-                    <Form.Control
-                        type="number"
-                        value={course.credits || ""}
-                        className="form-control mb-2"
-                        placeholder="Credits"
-                        onChange={(e) => setCourse({ ...course, credits: parseInt(e.target.value) || 3 })}
-                    />
-                    <Form.Control
                         as="textarea"
-                        value={course.description || ""}
+                        value={course.description}
                         className="form-control mb-2"
                         placeholder="Course Description"
                         onChange={(e) =>
                             setCourse({ ...course, description: e.target.value })
                         }
                     />
-                    <Button onClick={handleAddCourse} id="wd-add-new-course-click" className="btn btn-primary me-2">
-                        Add Course
-                    </Button>
-                    <Button onClick={updateCourse} id="wd-update-course-click" className="btn btn-warning">
-                        Update
-                    </Button>
+                    <Button onClick={addCourse} id="wd-add-new-course-click" className="btn btn-primary me-2">Add</Button>
+                    <Button onClick={updateCourse} id="wd-update-course-click" className="btn btn-warning">Update</Button>
                     <hr />
                 </div>
             )}

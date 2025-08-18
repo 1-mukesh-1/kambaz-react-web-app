@@ -14,6 +14,7 @@ import * as userClient from "./Account/client";
 import { setCourses as setCoursesInReducer } from "./Courses/reducer";
 import { setEnrollments, enrollCourse, unenrollCourse } from "./reducer";
 
+
 export default function Kambaz() {
 	const dispatch = useDispatch();
 	const { currentUser } = useSelector((state: any) => state.accountReducer);
@@ -53,6 +54,7 @@ export default function Kambaz() {
 		}
 	};
 
+
 	const findMyCourses = async () => {
 		if (!currentUser?._id) return;
 		try {
@@ -76,6 +78,7 @@ export default function Kambaz() {
 			dispatch(setEnrollments([]));
 		}
 	}, [currentUser, enrolling]);
+
 
 	const updateEnrollment = async (courseId: string, newEnrolledState: boolean) => {
 		if (!currentUser?._id) return;
@@ -101,75 +104,33 @@ export default function Kambaz() {
 	};
 
 	const [course, setCourse] = useState<any>({
-		name: "",
-		number: "",
-		startDate: new Date().toISOString().split('T')[0],
-		endDate: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], // 90 days from now
-		description: "",
-		department: "",
-		credits: 3,
+		_id: "1234",
+		name: "New Course",
+		number: "New Number",
+		startDate: "2023-09-10",
+		endDate: "2023-12-15",
+		description: "New Description",
+		department: "CS",
+		credits: 4,
 	});
 
 	const addNewCourse = async () => {
-		try {
-			console.log("Creating course with data:", course);
-			
-			const courseData = {
-				...course,
-				author: currentUser?._id,
-			};
-			
-			const newCourse = await courseClient.createCourse(courseData);
-			console.log("Course created successfully:", newCourse);
-			
-			const courseWithEnrollment = { ...newCourse, enrolled: true };
-			setCourses([...courses, courseWithEnrollment]);
-			
-			if (currentUser?._id) {
-				try {
-					await userClient.enrollIntoCourse(currentUser._id, newCourse._id);
-					dispatch(enrollCourse({ userId: currentUser._id, courseId: newCourse._id }));
-				} catch (enrollError) {
-					console.warn("Failed to auto-enroll in course:", enrollError);
-				}
-			}
-
-			setCourse({
-				name: "",
-				number: "",
-				startDate: new Date().toISOString().split('T')[0],
-				endDate: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-				description: "",
-				department: "",
-				credits: 3,
-			});
-		} catch (error: any) {
-			console.error("Error creating course:", error);
-			alert(`Failed to create course: ${error.response?.data?.message || error.message}`);
-		}
+		const newCourse = await courseClient.createCourse(course);
+		setCourses([...courses, { ...newCourse, enrolled: true }]);
 	};
 
 	const deleteCourse = async (courseId: string) => {
-		try {
-			await courseClient.deleteCourse(courseId);
-			setCourses(courses.filter((c) => c._id !== courseId));
-		} catch (error: any) {
-			console.error("Error deleting course:", error);
-			alert(`Failed to delete course: ${error.response?.data?.message || error.message}`);
-		}
+		await courseClient.deleteCourse(courseId);
+		setCourses(courses.filter((c) => c._id !== courseId));
 	};
 
 	const updateCourse = async () => {
-		try {
-			await courseClient.updateCourse(course);
-			setCourses(
-				courses.map((c) => (c._id === course._id ? course : c))
-			);
-		} catch (error: any) {
-			console.error("Error updating course:", error);
-			alert(`Failed to update course: ${error.response?.data?.message || error.message}`);
-		}
+		await courseClient.updateCourse(course);
+		setCourses(
+			courses.map((c) => (c._id === course._id ? course : c))
+		);
 	};
+
 
 	return (
 		<Session>
