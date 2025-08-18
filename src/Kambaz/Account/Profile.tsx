@@ -4,24 +4,11 @@ import { useSelector, useDispatch } from "react-redux";
 import { setCurrentUser } from "./reducer";
 import { Button, FormControl } from "react-bootstrap";
 import * as client from "./client";
-
 export default function Profile() {
 	const [profile, setProfile] = useState<any>({});
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
 	const { currentUser } = useSelector((state: any) => state.accountReducer);
-
-	const formatDateForInput = (dateString: string) => {
-		if (!dateString) return "";
-		try {
-			const date = new Date(dateString);
-			return date.toISOString().split('T')[0];
-		} catch (error) {
-			console.error("Date format error:", error);
-			return "";
-		}
-	};
-
 	const updateProfile = async () => {
 		let updatedProfile;
 		if (!profile._id) {
@@ -32,22 +19,18 @@ export default function Profile() {
 		dispatch(setCurrentUser(updatedProfile));
 		navigate("/Kambaz/Dashboard");
 	};
-
 	const fetchProfile = () => {
 		if (!currentUser) return navigate("/Kambaz/Account/Signin");
 		setProfile(currentUser);
 	};
-
 	const signout = async () => {
 		await client.signout();
 		dispatch(setCurrentUser(null));
 		navigate("/Kambaz/Account/Signin");
 	};
-
 	useEffect(() => {
 		fetchProfile();
 	}, []);
-
 	return (
 		<div className="wd-profile-screen">
 			<h3>Profile</h3>
@@ -90,7 +73,7 @@ export default function Profile() {
 						}
 					/>
 					<FormControl
-						value={formatDateForInput(profile.dob) || ""}
+						defaultValue={profile.dob || new Date().toISOString().split("T")[0]}
 						id="wd-dob"
 						className="mb-2"
 						onChange={(e) => setProfile({ ...profile, dob: e.target.value })}
@@ -107,7 +90,6 @@ export default function Profile() {
 						onChange={(e) => setProfile({ ...profile, role: e.target.value })}
 						className="form-control mb-2"
 						id="wd-role"
-						value={profile.role || "USER"}
 					>
 						<option value="USER">User</option>
 						<option value="ADMIN">Admin</option>
