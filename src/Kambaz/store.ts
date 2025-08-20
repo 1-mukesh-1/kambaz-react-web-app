@@ -4,6 +4,8 @@ import accountReducer from "./Account/reducer";
 import assignmentsReducer from "./Courses/Assignments/reducer";
 import coursesReducer from "./Courses/reducer";
 import enrollmentReducer from "./reducer.ts";
+import quizzesReducer from "./Courses/Quizzes/reducer";
+
 const store = configureStore({
   reducer: {
     modulesReducer,
@@ -11,8 +13,10 @@ const store = configureStore({
     assignmentsReducer,
     coursesReducer,
     enrollmentReducer,
+    quizzesReducer,
   },
 });
+
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
 

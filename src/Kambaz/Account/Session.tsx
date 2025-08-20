@@ -6,19 +6,26 @@ import { useDispatch } from "react-redux";
 export default function Session({ children }: { children: any }) {
     const [pending, setPending] = useState(true);
     const dispatch = useDispatch();
+    
     const fetchProfile = async () => {
         try {
             const currentUser = await client.profile();
             dispatch(setCurrentUser(currentUser));
         } catch (err: any) {
-            console.error(err);
+            if (err.response?.status !== 401) {
+                console.error("Session error:", err);
+            }
         }
         setPending(false);
     };
+    
     useEffect(() => {
         fetchProfile();
     }, []);
+    
     if (!pending) {
         return children;
     }
+
+    return null;
 }

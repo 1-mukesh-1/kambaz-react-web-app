@@ -1,5 +1,3 @@
-import { StrictMode } from 'react';
-import { createRoot } from 'react-dom/client';
 import "bootstrap/dist/css/bootstrap.min.css";
 import Kambaz from "./Kambaz";
 import Labs from "./Labs";
@@ -22,10 +20,3 @@ export default function App() {
     </Provider>
   );
 }
-
-const root = createRoot(document.getElementById('root')!);
-root.render(
-  <StrictMode>
-    <App />
-  </StrictMode>
-);

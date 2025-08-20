@@ -13,7 +13,7 @@ export default function HttpClient() {
 
     const fetchWelcomeOnLoad = async () => {
         try {
-            setWelcomeOnLoad("Loading...");  // Show loading state
+            setWelcomeOnLoad("Loading...");
             console.log("Starting to fetch welcome message...");
             
             const welcome = await client.fetchWelcomeMessage();
