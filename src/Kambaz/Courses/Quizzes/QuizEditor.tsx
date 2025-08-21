@@ -165,6 +165,24 @@ export default function QuizEditor() {
 
                                 <Col md={6}>
                                     <Form.Group className="mb-3">
+                                        <Form.Label>Points (Sum of all questions)</Form.Label>
+                                        <Form.Control
+                                            type="number"
+                                            value={currentQuiz?.points || 0}
+                                            readOnly
+                                            disabled
+                                            style={{ backgroundColor: '#e9ecef', cursor: 'not-allowed' }}
+                                        />
+                                        <Form.Text className="text-muted">
+                                            Points are automatically calculated from question points
+                                        </Form.Text>
+                                    </Form.Group>
+                                </Col>
+                            </Row>
+
+                            <Row>
+                                <Col md={6}>
+                                    <Form.Group className="mb-3">
                                         <Form.Label>Assignment Group</Form.Label>
                                         <Form.Select
                                             name="assignmentGroup"
@@ -178,9 +196,7 @@ export default function QuizEditor() {
                                         </Form.Select>
                                     </Form.Group>
                                 </Col>
-                            </Row>
 
-                            <Row>
                                 <Col md={6}>
                                     <Form.Group className="mb-3">
                                         <Form.Label>Time Limit (Minutes)</Form.Label>
@@ -192,7 +208,9 @@ export default function QuizEditor() {
                                         />
                                     </Form.Group>
                                 </Col>
+                            </Row>
 
+                            <Row>
                                 <Col md={6}>
                                     <Form.Group className="mb-3">
                                         <Form.Label>Access Code (Optional)</Form.Label>
@@ -205,19 +223,8 @@ export default function QuizEditor() {
                                         />
                                     </Form.Group>
                                 </Col>
-                            </Row>
 
-                            <Row>
                                 <Col md={6}>
-                                    <Form.Check
-                                        className="mb-3"
-                                        type="checkbox"
-                                        name="shuffleAnswers"
-                                        label="Shuffle Answers"
-                                        checked={formData.shuffleAnswers}
-                                        onChange={handleInputChange}
-                                    />
-
                                     <Form.Check
                                         className="mb-3"
                                         type="checkbox"
@@ -239,6 +246,19 @@ export default function QuizEditor() {
                                             />
                                         </Form.Group>
                                     )}
+                                </Col>
+                            </Row>
+
+                            <Row>
+                                <Col md={6}>
+                                    <Form.Check
+                                        className="mb-3"
+                                        type="checkbox"
+                                        name="shuffleAnswers"
+                                        label="Shuffle Answers"
+                                        checked={formData.shuffleAnswers}
+                                        onChange={handleInputChange}
+                                    />
 
                                     <Form.Check
                                         className="mb-3"
@@ -248,9 +268,7 @@ export default function QuizEditor() {
                                         checked={formData.showCorrectAnswers}
                                         onChange={handleInputChange}
                                     />
-                                </Col>
 
-                                <Col md={6}>
                                     <Form.Check
                                         className="mb-3"
                                         type="checkbox"
@@ -259,7 +277,9 @@ export default function QuizEditor() {
                                         checked={formData.oneQuestionAtATime}
                                         onChange={handleInputChange}
                                     />
+                                </Col>
 
+                                <Col md={6}>
                                     <Form.Check
                                         className="mb-3"
                                         type="checkbox"

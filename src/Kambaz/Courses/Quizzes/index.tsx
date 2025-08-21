@@ -23,7 +23,13 @@ export default function Quizzes() {
         try {
             setLoading(true);
             const courseQuizzes = await client.findQuizzesForCourse(cid!);
-            dispatch(setQuizzes(courseQuizzes));
+            const sortedQuizzes = courseQuizzes.sort((a: any, b: any) => {
+                if (!a.availableDate && !b.availableDate) return 0;
+                if (!a.availableDate) return 1;
+                if (!b.availableDate) return -1;
+                return new Date(a.availableDate).getTime() - new Date(b.availableDate).getTime();
+            });
+            dispatch(setQuizzes(sortedQuizzes));
         } catch (error) {
             console.error("Error fetching quizzes:", error);
         } finally {
@@ -106,6 +112,16 @@ export default function Quizzes() {
         return <div className="p-4">Loading quizzes...</div>;
     }
 
+    const sortedQuizzes = quizzes
+        .filter((quiz: any) => quiz.course === cid)
+        .filter((quiz: any) => isFaculty || quiz.published)
+        .sort((a: any, b: any) => {
+            if (!a.availableDate && !b.availableDate) return 0;
+            if (!a.availableDate) return 1;
+            if (!b.availableDate) return -1;
+            return new Date(a.availableDate).getTime() - new Date(b.availableDate).getTime();
+        });
+
     return (
         <div id="wd-quizzes">
             {isFaculty && (
@@ -124,7 +140,7 @@ export default function Quizzes() {
                 </div>
             )}
 
-            {quizzes.length === 0 ? (
+            {sortedQuizzes.length === 0 ? (
                 <div className="text-center p-5">
                     <h4>No quizzes available</h4>
                     {isFaculty && (
@@ -133,93 +149,90 @@ export default function Quizzes() {
                 </div>
             ) : (
                 <ListGroup className="rounded-0">
-                    {quizzes
-                        .filter((quiz: any) => quiz.course === cid)
-                        .filter((quiz: any) => isFaculty || quiz.published)
-                        .map((quiz: any) => (
-                            <ListGroup.Item 
-                                key={quiz._id} 
-                                className="p-3 mb-2 border"
-                            >
-                                <div className="d-flex justify-content-between align-items-start">
-                                    <div className="d-flex align-items-start">
-                                        <BsGripVertical className="me-2 fs-3 text-muted" />
-                                        <div>
-                                            <Link 
-                                                to={`/Kambaz/Courses/${cid}/Quizzes/${quiz._id}`}
-                                                className="text-decoration-none"
-                                            >
-                                                <h5 className="mb-1">{quiz.title}</h5>
-                                            </Link>
-                                            <div className="text-muted small">
-                                                <span className="me-3">
-                                                    <strong>{getAvailabilityStatus(quiz)}</strong>
+                    {sortedQuizzes.map((quiz: any) => (
+                        <ListGroup.Item 
+                            key={quiz._id} 
+                            className="p-3 mb-2 border"
+                        >
+                            <div className="d-flex justify-content-between align-items-start">
+                                <div className="d-flex align-items-start">
+                                    <BsGripVertical className="me-2 fs-3 text-muted" />
+                                    <div>
+                                        <Link 
+                                            to={`/Kambaz/Courses/${cid}/Quizzes/${quiz._id}`}
+                                            className="text-decoration-none"
+                                        >
+                                            <h5 className="mb-1">{quiz.title}</h5>
+                                        </Link>
+                                        <div className="text-muted small">
+                                            <span className="me-3">
+                                                <strong>{getAvailabilityStatus(quiz)}</strong>
+                                            </span>
+                                            <span className="me-3">
+                                                <strong>Due:</strong> {formatDate(quiz.dueDate)}
+                                            </span>
+                                            <span className="me-3">
+                                                <strong>{quiz.points} pts</strong>
+                                            </span>
+                                            <span className="me-3">
+                                                <strong>{quiz.questions?.length || 0} Questions</strong>
+                                            </span>
+                                            {isStudent && quiz.lastScore !== undefined && (
+                                                <span>
+                                                    <strong>Score:</strong> {quiz.lastScore}/{quiz.points}
                                                 </span>
-                                                <span className="me-3">
-                                                    <strong>Due:</strong> {formatDate(quiz.dueDate)}
-                                                </span>
-                                                <span className="me-3">
-                                                    <strong>{quiz.points} pts</strong>
-                                                </span>
-                                                <span className="me-3">
-                                                    <strong>{quiz.questions?.length || 0} Questions</strong>
-                                                </span>
-                                                {isStudent && quiz.lastScore !== undefined && (
-                                                    <span>
-                                                        <strong>Score:</strong> {quiz.lastScore}/{quiz.points}
-                                                    </span>
-                                                )}
-                                            </div>
+                                            )}
                                         </div>
                                     </div>
-
-                                    <div className="d-flex align-items-center">
-                                        {isFaculty && (
-                                            <>
-                                                <Button
-                                                    variant="link"
-                                                    className="p-0 me-3"
-                                                    onClick={() => handlePublishToggle(quiz._id, quiz.published)}
-                                                >
-                                                    {quiz.published ? (
-                                                        <FaCheckCircle className="text-success fs-5" />
-                                                    ) : (
-                                                        <FaTimesCircle className="text-danger fs-5" />
-                                                    )}
-                                                </Button>
-                                                <Dropdown>
-                                                    <Dropdown.Toggle 
-                                                        variant="link" 
-                                                        className="p-0 text-dark"
-                                                        id={`dropdown-${quiz._id}`}
-                                                    >
-                                                        <FaEllipsisV />
-                                                    </Dropdown.Toggle>
-                                                    <Dropdown.Menu>
-                                                        <Dropdown.Item 
-                                                            as={Link} 
-                                                            to={`/Kambaz/Courses/${cid}/Quizzes/${quiz._id}`}
-                                                        >
-                                                            <FaEdit className="me-2" /> Edit
-                                                        </Dropdown.Item>
-                                                        <Dropdown.Item 
-                                                            onClick={() => handleDeleteQuiz(quiz._id)}
-                                                        >
-                                                            <FaTrash className="me-2" /> Delete
-                                                        </Dropdown.Item>
-                                                        <Dropdown.Item 
-                                                            onClick={() => handlePublishToggle(quiz._id, quiz.published)}
-                                                        >
-                                                            {quiz.published ? "Unpublish" : "Publish"}
-                                                        </Dropdown.Item>
-                                                    </Dropdown.Menu>
-                                                </Dropdown>
-                                            </>
-                                        )}
-                                    </div>
                                 </div>
-                            </ListGroup.Item>
-                        ))}
+
+                                <div className="d-flex align-items-center">
+                                    {isFaculty && (
+                                        <>
+                                            <Button
+                                                variant="link"
+                                                className="p-0 me-3"
+                                                onClick={() => handlePublishToggle(quiz._id, quiz.published)}
+                                            >
+                                                {quiz.published ? (
+                                                    <FaCheckCircle className="text-success fs-5" />
+                                                ) : (
+                                                    <FaTimesCircle className="text-danger fs-5" />
+                                                )}
+                                            </Button>
+                                            <Dropdown>
+                                                <Dropdown.Toggle 
+                                                    variant="link" 
+                                                    className="p-0 text-dark"
+                                                    id={`dropdown-${quiz._id}`}
+                                                >
+                                                    <FaEllipsisV />
+                                                </Dropdown.Toggle>
+                                                <Dropdown.Menu>
+                                                    <Dropdown.Item 
+                                                        as={Link} 
+                                                        to={`/Kambaz/Courses/${cid}/Quizzes/${quiz._id}`}
+                                                    >
+                                                        <FaEdit className="me-2" /> Edit
+                                                    </Dropdown.Item>
+                                                    <Dropdown.Item 
+                                                        onClick={() => handleDeleteQuiz(quiz._id)}
+                                                    >
+                                                        <FaTrash className="me-2" /> Delete
+                                                    </Dropdown.Item>
+                                                    <Dropdown.Item 
+                                                        onClick={() => handlePublishToggle(quiz._id, quiz.published)}
+                                                    >
+                                                        {quiz.published ? "Unpublish" : "Publish"}
+                                                    </Dropdown.Item>
+                                                </Dropdown.Menu>
+                                            </Dropdown>
+                                        </>
+                                    )}
+                                </div>
+                            </div>
+                        </ListGroup.Item>
+                    ))}
                 </ListGroup>
             )}
         </div>
