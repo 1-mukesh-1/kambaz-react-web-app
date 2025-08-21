@@ -83,8 +83,9 @@ const quizzesSlice = createSlice({
             state.quizzes = state.quizzes.map(quiz =>
                 quiz._id === quizId ? { ...quiz, published } : quiz
             );
-            if (state.currentQuiz?._id === quizId) {
-                state.currentQuiz = { ...state.currentQuiz, published };
+            
+            if (state.currentQuiz && state.currentQuiz._id === quizId) {
+                state.currentQuiz.published = published;
             }
         },
         setCurrentAttempt: (state, action) => {
