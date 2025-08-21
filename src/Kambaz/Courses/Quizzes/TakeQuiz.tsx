@@ -17,6 +17,7 @@ export default function TakeQuiz() {
     const [showAccessCodeModal, setShowAccessCodeModal] = useState(false);
     const [accessCode, setAccessCode] = useState("");
     const [accessCodeError, setAccessCodeError] = useState("");
+    const [submitting, setSubmitting] = useState(false);
 
     useEffect(() => {
         loadQuizAndAttempt();
@@ -46,6 +47,12 @@ export default function TakeQuiz() {
                 client.getAttemptById(attemptId!)
             ]);
 
+            if (attemptData.status === "SUBMITTED") {
+                console.log("Attempt already submitted, redirecting to review");
+                navigate(`/Kambaz/Courses/${cid}/Quizzes/${qid}/review/${attemptId}`);
+                return;
+            }
+
             if (quizData.accessCode && !attemptData.accessCodeVerified) {
                 setQuiz(quizData);
                 setAttempt(attemptData);
@@ -63,6 +70,12 @@ export default function TakeQuiz() {
                 const elapsed = Math.floor((now - startTime) / 1000);
                 const totalTime = quizData.timeLimit * 60;
                 const remaining = Math.max(0, totalTime - elapsed);
+                
+                if (remaining <= 0) {
+                    handleSubmit(true);
+                    return;
+                }
+                
                 setTimeRemaining(remaining);
             }
 
@@ -75,6 +88,8 @@ export default function TakeQuiz() {
             }
         } catch (error) {
             console.error("Error loading quiz:", error);
+            alert("Error loading quiz. Please try again.");
+            navigate(`/Kambaz/Courses/${cid}/Quizzes`);
         } finally {
             setLoading(false);
         }
@@ -90,7 +105,12 @@ export default function TakeQuiz() {
         setAccessCodeError("");
         
         if (quiz.timeLimit) {
-            setTimeRemaining(quiz.timeLimit * 60);
+            const startTime = new Date(attempt.startedAt).getTime();
+            const now = new Date().getTime();
+            const elapsed = Math.floor((now - startTime) / 1000);
+            const totalTime = quiz.timeLimit * 60;
+            const remaining = Math.max(0, totalTime - elapsed);
+            setTimeRemaining(remaining);
         }
     };
 
@@ -103,16 +123,6 @@ export default function TakeQuiz() {
             ...prev,
             [questionId]: answer
         }));
-
-        saveAnswerToServer(questionId, answer);
-    };
-
-    const saveAnswerToServer = async (questionId: string, answer: any) => {
-        try {
-            await client.saveAnswer(attemptId!, questionId, answer);
-        } catch (error) {
-            console.error("Error saving answer:", error);
-        }
     };
 
     const handleNextQuestion = () => {
@@ -128,19 +138,42 @@ export default function TakeQuiz() {
     };
 
     const handleSubmit = async (autoSubmit = false) => {
+        if (submitting) {
+            return;
+        }
+
         if (!autoSubmit && !window.confirm("Are you sure you want to submit the quiz? You cannot change your answers after submission.")) {
             return;
         }
 
-        try {            
+        setSubmitting(true);
+
+        try {
+            const formattedAnswers = Object.keys(answers).map(questionId => ({
+                questionId,
+                answer: answers[questionId]
+            }));
+
+            console.log("Submitting attempt with answers:", formattedAnswers);
+            
+            const result = await client.submitAttempt(attemptId!, formattedAnswers);
+            
+            console.log("Submit result:", result);
+            
             if (autoSubmit) {
                 alert("Time's up! Your quiz has been automatically submitted.");
             }
             
-            navigate(`/Kambaz/Courses/${cid}/Quizzes/${qid}/review/${attemptId}`);
-        } catch (error) {
+            navigate(`/Kambaz/Courses/${cid}/Quizzes/${qid}/review/${attemptId}`, { replace: true });
+        } catch (error: any) {
             console.error("Error submitting quiz:", error);
-            alert("Failed to submit quiz. Please try again.");
+            setSubmitting(false);
+            
+            if (error.response?.data?.error?.includes("already been submitted")) {
+                navigate(`/Kambaz/Courses/${cid}/Quizzes/${qid}/review/${attemptId}`, { replace: true });
+            } else {
+                alert("Failed to submit quiz. Please try again.");
+            }
         }
     };
 
@@ -177,7 +210,7 @@ export default function TakeQuiz() {
                                 label={choice.text}
                                 checked={answer === choice._id}
                                 onChange={() => handleAnswerChange(question._id, choice._id)}
-                                disabled={isLocked}
+                                disabled={isLocked || submitting}
                                 className="mb-2"
                             />
                         ))}
@@ -199,7 +232,7 @@ export default function TakeQuiz() {
                             label="True"
                             checked={answer === true}
                             onChange={() => handleAnswerChange(question._id, true)}
-                            disabled={isLocked}
+                            disabled={isLocked || submitting}
                             className="mb-2"
                         />
                         <Form.Check
@@ -208,7 +241,7 @@ export default function TakeQuiz() {
                             label="False"
                             checked={answer === false}
                             onChange={() => handleAnswerChange(question._id, false)}
-                            disabled={isLocked}
+                            disabled={isLocked || submitting}
                         />
                     </div>
                 );
@@ -226,7 +259,7 @@ export default function TakeQuiz() {
                             type="text"
                             value={answer || ""}
                             onChange={(e) => handleAnswerChange(question._id, e.target.value)}
-                            disabled={isLocked}
+                            disabled={isLocked || submitting}
                             placeholder="Enter your answer"
                         />
                     </div>
@@ -272,6 +305,17 @@ export default function TakeQuiz() {
         return <div className="p-4">Loading quiz...</div>;
     }
 
+    if (submitting) {
+        return (
+            <div className="p-4 text-center">
+                <h3>Submitting your quiz...</h3>
+                <div className="spinner-border" role="status">
+                    <span className="sr-only"></span>
+                </div>
+            </div>
+        );
+    }
+
     const currentQuestion = quiz.questions[currentQuestionIndex];
     const answeredCount = Object.keys(answers).length;
     const progress = (answeredCount / quiz.questions.length) * 100;
@@ -299,7 +343,11 @@ export default function TakeQuiz() {
                 </Card.Header>
 
                 <Card.Body>
-                    {quiz.oneQuestionAtATime ? (
+                    {quiz.questions.length === 0 ? (
+                        <Alert variant="warning">
+                            This quiz has no questions. Please contact your instructor.
+                        </Alert>
+                    ) : quiz.oneQuestionAtATime ? (
                         <div>
                             <div className="mb-3">
                                 <strong>
@@ -312,16 +360,24 @@ export default function TakeQuiz() {
                                 <Button
                                     variant="secondary"
                                     onClick={handlePreviousQuestion}
-                                    disabled={currentQuestionIndex === 0 || quiz.lockQuestionsAfterAnswering}
+                                    disabled={currentQuestionIndex === 0 || quiz.lockQuestionsAfterAnswering || submitting}
                                 >
                                     Previous
                                 </Button>
                                 {currentQuestionIndex === quiz.questions.length - 1 ? (
-                                    <Button variant="danger" onClick={() => handleSubmit(false)}>
+                                    <Button 
+                                        variant="danger" 
+                                        onClick={() => handleSubmit(false)}
+                                        disabled={submitting}
+                                    >
                                         Submit Quiz
                                     </Button>
                                 ) : (
-                                    <Button variant="primary" onClick={handleNextQuestion}>
+                                    <Button 
+                                        variant="primary" 
+                                        onClick={handleNextQuestion}
+                                        disabled={submitting}
+                                    >
                                         Next
                                     </Button>
                                 )}
@@ -342,7 +398,12 @@ export default function TakeQuiz() {
                                 </Card>
                             ))}
                             <div className="mt-4 text-center">
-                                <Button variant="danger" size="lg" onClick={() => handleSubmit(false)}>
+                                <Button 
+                                    variant="danger" 
+                                    size="lg" 
+                                    onClick={() => handleSubmit(false)}
+                                    disabled={submitting}
+                                >
                                     Submit Quiz
                                 </Button>
                             </div>
